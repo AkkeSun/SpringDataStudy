@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace : 앞서 만든 Mapper 인터페이스 지정 -->
+<mapper namespace="hello.itemservice.repository.mybatis.ItemMapper">
+
+  <!--
+  id : mapper 인터페이스에서 설정한 매소드명
+  useGeneratedKeys : 데이터베이스가 키를 생성하는 IDENTITY 전략일 경우 설정
+  keyProperty : IDENTITY 전략으로 생성된 키의 속성명
+  -->
+  <insert id="save" useGeneratedKeys="true" keyProperty="id">
+    insert into item (item_name, price, quantity)
+    values (#{itemName}, #{price}, #{quantity})
+  </insert>
+
+  <update id="update">
+    update item
+    set item_name=#{updateParam.itemName},
+        price=#{updateParam.price},
+        quantity=#{updateParam.quantity}
+    where id = #{id}
+  </update>
+
+  <!--resultType : 객채 리턴 타입 지정 -->
+  <select id="findById" resultType="Item">
+    select id, item_name, price, quantity
+    from item
+    where id = #{id}
+  </select>
+
+  <!--
+  xml 특수문자 처리방법
+  1. 정규식 사용
+  < : &lt;
+  > : &gt;
+  & : &amp;
+
+  2. CDATA 사용
+  <![CDATA[
+     and price <= #{maxPrice}
+  ]]>
+  -->
+  <select id="findAll" resultType="Item">
+    select id, item_name, price, quantity
+    from item
+    <where>
+      <if test="itemName != null and itemName != ''">
+        and item_name like concat('%',#{itemName},'%')
+      </if>
+      <if test="maxPrice != null">
+        and price &lt;= #{maxPrice}
+      </if>
+    </where>
+  </select>
+
+</mapper>

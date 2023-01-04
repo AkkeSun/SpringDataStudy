@@ -2,6 +2,8 @@ package hello.itemservice.config;
 
 import hello.itemservice.repository.ItemRepository;
 import hello.itemservice.repository.jdbcTemplate.JdbcTemplateItemRepositoryV2;
+import hello.itemservice.repository.mybatis.ItemMapper;
+import hello.itemservice.repository.mybatis.MyBatisItemRepository;
 import hello.itemservice.service.ItemService;
 import hello.itemservice.service.ItemServiceV1;
 import javax.sql.DataSource;
@@ -13,8 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class MemoryConfig {
 
-    // application.properties 설정으로 Bean 생성
-    private final DataSource dataSource;
+    private final ItemMapper itemMapper;
 
     @Bean
     public ItemService itemService() {
@@ -23,6 +24,6 @@ public class MemoryConfig {
 
     @Bean
     public ItemRepository itemRepository() {
-        return new JdbcTemplateItemRepositoryV2(dataSource);
+        return new MyBatisItemRepository(itemMapper);
     }
 }
